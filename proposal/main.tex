@@ -1,6 +1,6 @@
 % =====================================================================
 %  Proposal PERURI Chip Hackathon 2026
-%  Secure Battery Identity Chip
+%  SeBatt: Secure Battery Identity Chip
 %  Kompilasi: pdflatex main.tex (dua kali) atau latexmk -pdf main.tex
 % =====================================================================
 \documentclass[11pt,a4paper]{article}
@@ -35,7 +35,7 @@
 \usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
 \usepackage[hidelinks]{hyperref}
 \hypersetup{
-  pdftitle={Secure Battery Identity Chip},
+  pdftitle={SeBatt: Secure Battery Identity Chip},
   pdfauthor={Guntur Sulistyo, Dimas Eryan Ahnaf Fahrezi, Muhammad Muqtada Alhaddad (Universitas Gadjah Mada)},
   pdfsubject={Proposal Hackathon Chip 2026, IC Chip Design \& FPGA Implementation},
 }
@@ -74,7 +74,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
-\fancyfoot[C]{\footnotesize\color{subtle}Hackathon CHIP 2026 --- Secure Battery Identity Chip \quad|\quad \thepage}
+\fancyfoot[C]{\footnotesize\color{subtle}Hackathon CHIP 2026 --- SeBatt: Secure Battery Identity Chip \quad|\quad \thepage}
 
 % =====================================================================
 \begin{document}
@@ -134,7 +134,9 @@
 {\footnotesize\color{subtle} Kategori: IC Chip Design \& FPGA Implementation \,\textperiodcentered\, Topik 1: Secure Identity \& Security Element Chip\par}
 
 \vspace{2.6cm}
-{\fontsize{46}{50}\selectfont\bfseries\color{ink} Secure Battery\\[2pt] Identity Chip\par}
+{\fontsize{58}{62}\selectfont\bfseries\color{ink} SeBatt\par}
+\vspace{6pt}
+{\fontsize{24}{28}\selectfont\bfseries\color{ink!85} Secure Battery Identity Chip\par}
 \vspace{14pt}
 {\color{coveraccent}\rule{2.4cm}{3pt}\par}
 \vspace{14pt}
@@ -166,7 +168,7 @@
 
 Setiap hari, pengendara motor listrik menukar baterai kosong dengan baterai penuh di stasiun penukaran baterai (SPBKLU). Baterai tersebut merupakan aset bersama yang berpindah dari satu pengendara ke pengendara lain dan dapat melewati beberapa operator dengan sistem yang berbeda. Saat menerima sebuah baterai, stasiun hanya dapat membaca data yang dilaporkan baterai itu sendiri sehingga keaslian dan catatan pemakaiannya tidak dapat dibuktikan. Baterai palsu atau bekas yang dirakit ulang tanpa standar dapat lolos ke jaringan dan berisiko memicu kebakaran. Jumlah siklus pemakaian juga dapat diubah agar baterai tua tampak baru, seperti odometer mobil bekas yang diputar mundur. Kedua celah ini makin luas seiring bertambahnya motor listrik, yang pada akhir 2024 telah mencapai sekitar 168 ribu unit~\cite{ruptl}.
 
-Kami mengusulkan Secure Battery Identity Chip, chip keamanan kecil yang ditanam di dalam setiap baterai. Kami merancang chip ini untuk membaca ``sidik jari'' alami dari variasi fabrikasi silikonnya dan menurunkan kunci dari sidik jari tersebut setiap kali dibutuhkan. Kunci tidak pernah disimpan di dalam chip, sehingga tidak ada kunci di memori chip yang dapat dibaca atau disalin. Saat baterai masuk, basis data identitas mengirim angka acak sekali pakai (\emph{nonce}) yang hanya dapat dijawab oleh chip asli (Gambar~\ref{fig:konsep}). Catatan pemakaian berasal dari pengukuran stasiun saat mengisi daya dan disimpan di basis data identitas yang dikelola lembaga penjamin keaslian. Jika chip mendeteksi pembongkaran atau gangguan listrik, chip berhenti menjawab dan basis data memblokir identitasnya.
+Kami mengusulkan SeBatt (Secure Battery Identity Chip), chip keamanan kecil yang ditanam di dalam setiap baterai. Kami merancang chip ini untuk membaca ``sidik jari'' alami dari variasi fabrikasi silikonnya dan menurunkan kunci dari sidik jari tersebut setiap kali dibutuhkan. Kunci tidak pernah disimpan di dalam chip, sehingga tidak ada kunci di memori chip yang dapat dibaca atau disalin. Saat baterai masuk, basis data identitas mengirim angka acak sekali pakai (\emph{nonce}) yang hanya dapat dijawab oleh chip asli (Gambar~\ref{fig:konsep}). Catatan pemakaian berasal dari pengukuran stasiun saat mengisi daya dan disimpan di basis data identitas yang dikelola lembaga penjamin keaslian. Jika chip mendeteksi pembongkaran atau gangguan listrik, chip berhenti menjawab dan basis data memblokir identitasnya.
 
 \begin{figure}[H]
 \centering
@@ -302,7 +304,7 @@ Chip ini memiliki satu fungsi inti, yaitu membuktikan identitas \emph{pack} bate
   \begin{scope}[on background layer]
     \node[draw=secline, line width=1pt, rounded corners=6pt, fill=secfill!35, inner sep=10pt,
           fit=(bus)(ctrl)(hmac)(vault)(fe)(puf)(tamp),
-          label={[font=\sffamily\small\bfseries, text=secline]above:Secure Battery Identity Chip}] (chip) {};
+          label={[font=\sffamily\small\bfseries, text=secline]above:SeBatt}] (chip) {};
   \end{scope}
 
   % jalur perintah
