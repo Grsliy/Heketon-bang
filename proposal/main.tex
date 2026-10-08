@@ -84,13 +84,14 @@
 % =====================================================================
 \begin{titlepage}
 \thispagestyle{empty}
-\definecolor{navy}{HTML}{1E1B4B}
+\definecolor{coverdark}{HTML}{3F4A1A}
+\definecolor{coveraccent}{HTML}{6B7F24}
 \definecolor{ink}{HTML}{0F172A}
-\definecolor{motif}{HTML}{A5B4FC}
+\definecolor{motif}{HTML}{C5D48A}
 \begin{tikzpicture}[remember picture, overlay]
   % --- Pita kiri
-  \fill[navy] (current page.north west) rectangle ([xshift=9mm]current page.south west);
-  \fill[secline] ([xshift=9mm]current page.north west) rectangle ([xshift=10.5mm]current page.south west);
+  \fill[coverdark] (current page.north west) rectangle ([xshift=9mm]current page.south west);
+  \fill[hdrgreen] ([xshift=9mm]current page.north west) rectangle ([xshift=10.5mm]current page.south west);
 
   % --- Motif chip + sidik jari (PUF), kanan bawah, sebagian keluar halaman
   \coordinate (c) at ([xshift=-36mm, yshift=86mm]current page.south east);
@@ -111,11 +112,11 @@
       \foreach \k in {0,1,2,3} {
         \pgfmathsetmacro{\st}{\k*90 + \r*11 + rnd*20}
         \pgfmathsetmacro{\ln}{52 + rnd*26}
-        \draw[secline!65, line width=0.9pt, line cap=round]
+        \draw[coveraccent!70, line width=0.9pt, line cap=round]
           ([shift={(\st:\r mm)}]0,0) arc[start angle=\st, delta angle=\ln, radius=\r mm];
       }
     }
-    \fill[secline!60] (0,0) circle (1.2mm);
+    \fill[coveraccent] (0,0) circle (1.2mm);
   \end{scope}
 
   % --- Garis footer
@@ -128,14 +129,14 @@
 \end{tikzpicture}
 
 \vspace*{0.6cm}
-{\footnotesize\bfseries\color{secline} PROPOSAL PESERTA \quad\textcolor{subtle!60}{|}\quad \textcolor{subtle}{HACKATHON CHIP 2026}\par}
+{\footnotesize\bfseries\color{coveraccent} PROPOSAL PESERTA \quad\textcolor{subtle!60}{|}\quad \textcolor{subtle}{HACKATHON CHIP 2026}\par}
 \vspace{3pt}
 {\footnotesize\color{subtle} Kategori: IC Chip Design \& FPGA Implementation \,\textperiodcentered\, Topik 1: Secure Identity \& Security Element Chip\par}
 
 \vspace{2.6cm}
 {\fontsize{46}{50}\selectfont\bfseries\color{ink} Secure Battery\\[2pt] Identity Chip\par}
 \vspace{14pt}
-{\color{secline}\rule{2.4cm}{3pt}\par}
+{\color{coveraccent}\rule{2.4cm}{3pt}\par}
 \vspace{14pt}
 \begin{minipage}{0.86\linewidth}
 {\fontsize{15}{20}\selectfont\color{ink!80}\raggedright\hyphenpenalty=10000 Chip keamanan yang membuktikan keaslian baterai di stasiun tukar baterai kendaraan listrik, dengan kunci dari sidik jari silikon (PUF) yang tidak disimpan di chip\par}
