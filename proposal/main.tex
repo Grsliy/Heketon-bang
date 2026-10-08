@@ -165,7 +165,7 @@
 
 Setiap hari, pengendara motor listrik menukar baterai kosong dengan baterai penuh di stasiun penukaran baterai (SPBKLU). Baterai tersebut merupakan aset bersama yang berpindah dari satu pengendara ke pengendara lain dan dapat melewati beberapa operator dengan sistem yang berbeda. Saat menerima sebuah baterai, stasiun hanya dapat membaca data yang dilaporkan baterai itu sendiri sehingga keaslian dan catatan pemakaiannya tidak dapat dibuktikan. Baterai palsu atau bekas yang dirakit ulang tanpa standar dapat lolos ke jaringan dan berisiko memicu kebakaran. Jumlah siklus pemakaian juga dapat diubah agar baterai tua tampak baru, seperti odometer mobil bekas yang diputar mundur. Kedua celah ini makin luas seiring bertambahnya motor listrik, yang pada akhir 2024 telah mencapai sekitar 168 ribu unit~\cite{ruptl}.
 
-Kami mengusulkan Secure Battery Identity Chip, chip keamanan kecil yang ditanam di dalam setiap baterai. Kami merancang chip ini untuk membaca ``sidik jari'' alami dari variasi fabrikasi silikonnya dan menurunkan kunci dari sidik jari tersebut setiap kali dibutuhkan. Kunci tidak pernah disimpan di dalam chip, sehingga tidak ada kunci di memori chip yang dapat dibaca atau disalin. Saat baterai masuk, basis data identitas mengirim angka acak sekali pakai (\emph{nonce}) yang hanya dapat dijawab oleh chip asli (Gambar~\ref{fig:konsep}). Catatan pemakaian berasal dari pengukuran stasiun saat mengisi daya dan disimpan di basis data identitas yang dikelola lembaga penjamin keaslian. Jika chip mendeteksi pembongkaran atau gangguan listrik, chip berhenti menjawab dan basis data memblokir identitasnya.
+Kami mengusulkan Secure Battery Identity Chip, chip keamanan kecil yang ditanam di dalam setiap baterai. Arsitektur target menggunakan variasi fabrikasi silikon sebagai akar identitas dan menurunkan kunci saat autentikasi. Pada prototipe RTL saat ini, PUF fisik belum dibuat: simulasi memakai model LFSR perilaku yang deterministik, sehingga belum membuktikan sidik jari silikon atau karakteristik fisik. Saat baterai masuk, basis data identitas mengirim angka acak sekali pakai (\emph{nonce}) untuk autentikasi (Gambar~\ref{fig:konsep}). Catatan pemakaian berasal dari pengukuran stasiun saat mengisi daya dan disimpan di basis data identitas yang dikelola lembaga penjamin keaslian. Deteksi pembongkaran dan gangguan listrik tetap menjadi sasaran pengembangan.
 
 \begin{figure}[H]
 \centering
@@ -198,10 +198,10 @@ Riwayat tersebut hanya bermakna apabila identitas baterai tidak dapat dipalsukan
 \renewcommand{\arraystretch}{1.12}
 \begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}p{3.1cm}|X|}
 \hline
-\hdr{Chip yang dirancang} & \emph{Secure element} tanpa memori non-volatil untuk kunci dan data, berisi \emph{Ring-Oscillator PUF} dengan \emph{fuzzy extractor}, HMAC-SHA-256 berbasis baseline TT07, FSM \emph{challenge--response}, dan monitor \emph{tamper}. Target ASIC SKY130. \\ \hline
+\hdr{Arsitektur target} & \emph{Secure element} tanpa memori non-volatil dengan identitas berbasis PUF, HMAC-SHA-256, FSM \emph{challenge--response}, dan respons \emph{tamper}. RO-PUF fisik, \emph{fuzzy extractor}, monitor \emph{tamper}, dan implementasi ASIC SKY130 merupakan target pengembangan; model PUF RTL saat ini bersifat perilaku dan deterministik. \\ \hline
 \hdr{Target pengguna} & Operator stasiun dan penyedia sewa baterai (pemeriksa), produsen baterai dan BMS (pemasang chip), serta lembaga penjamin keaslian (pengelola basis data identitas). Adopsi dapat didorong melalui standar identitas baterai. \\ \hline
 \hdr{Dampak} & Baterai yang tidak dikenal ditolak sebelum diserahkan (keselamatan). Harga jual kembali dan garansi ditentukan dari riwayat yang tepercaya (ekonomi). Akar kepercayaan dirancang di dalam negeri (kemandirian). \\ \hline
-\hdr{Demo prototipe} & FPGA DE10-Nano. Baterai asli diterima, kloningan dan respons lama ditolak, serta pembongkaran membuat identitas diblokir. \\ \hline
+\hdr{Status prototipe} & Simulasi Verilator telah menguji SHA-256, HMAC-SHA-256, FSM, autentikasi valid/tidak valid, dan \emph{zeroize}. Validasi DE10-Nano, PUF fisik, uji \emph{replay}, dan deteksi pembongkaran masih direncanakan. \\ \hline
 \end{tabularx}
 \end{center}
 
@@ -368,17 +368,30 @@ Chip yang terkunci tetap mendapat daya dari sel, sehingga statusnya terbaca oleh
 \hdr{Modul} & \hdr{Tugas} & \hdr{Cara kerja} \\ \hline
 \texttt{bus\_if} & Antarmuka ke host & Register AXI-Lite (FPGA) atau I\textsuperscript{2}C (ASIC). Kunci tidak dapat dibaca melalui bus. \\ \hline
 \texttt{auth\_ctrl} & Mengatur urutan perintah & FSM \texttt{GET\_ID}, \texttt{AUTH}, dan \texttt{STATUS}. Membatasi laju \texttt{AUTH} dan menolak perintah saat \emph{lock}. \\ \hline
-\texttt{ro\_puf} & Membaca sidik jari silikon & 1.024 \emph{ring oscillator} yang frekuensinya dibandingkan berpasangan. \\ \hline
+\texttt{ro\_puf} & Sumber identitas & Target ASIC memakai \emph{ring oscillator} yang dibandingkan berpasangan; model RTL saat ini adalah LFSR deterministik untuk simulasi dan bukan PUF fisik. \\ \hline
 \texttt{fuzzy\_ext} & Membuat bit PUF stabil & \emph{Majority voting} dan kode repetisi untuk membuang bit yang berubah-ubah. Bit stabil di-\emph{hash} SHA-256 menjadi kunci 256 bit (target entropi $\geq$128 bit). \\ \hline
 \texttt{key\_vault} & Menyimpan kunci sementara & Menyimpan kunci hanya selama respons dihitung, lalu menghapusnya. Isinya tidak dapat dibaca dari luar chip. \\ \hline
-\texttt{hmac\_sha256} & Menghitung respons dan menurunkan kunci & SHA-256 dari baseline TT07~\cite{tt07}, digunakan untuk HMAC dan penurunan kunci. \\ \hline
+\texttt{hmac\_sha256} & Menghitung respons & Inti SHA-256 iteratif dan wrapper HMAC-SHA-256; kunci diberikan oleh blok PUF atau model perilakunya. \\ \hline
 \texttt{tamper\_mon} & Mendeteksi gangguan & Memantau clock dan sakelar casing, lalu memicu hapus kunci dan \emph{lock}. \\ \hline
 \end{tabularx}
 \end{center}
 
+\subsection{Status Implementasi dan Hasil Verifikasi Awal}
+
+Verifikasi awal dilakukan melalui simulasi RTL dengan Verilator.
+SHA-256 cocok dengan vektor uji pesan kosong, \texttt{abc}, dan
+\texttt{hello}. HMAC-SHA-256 pada RTL cocok dengan RFC 4231 kasus 1
+terhadap referensi Python. Uji integrasi top-level melalui AXI juga
+memverifikasi autentikasi dengan tag cocok, penolakan tag tidak cocok,
+dan penghapusan state sensitif melalui \emph{zeroize}. FSM diuji untuk
+reset, kegagalan autentikasi, kondisi fault, pengulangan, dan START saat
+BUSY. PUF simulasi memakai model LFSR deterministik; pengujian ini hanya
+memastikan fungsi antarmuka dan reproduksibilitas respons, bukan sifat
+osilator fisik. Belum ada hasil pengukuran PUF fisik yang diklaim.
+
 \subsection{Implementasi dan Estimasi Kinerja}
 
-\textbf{Prototipe FPGA.} Logika chip dijalankan pada bagian FPGA (Cyclone~V) di DE10-Nano. Prosesor ARM (HPS) pada board yang sama berperan sebagai BMS, stasiun, dan basis data identitas yang diemulasikan dengan Python. Karena antarmukanya sederhana dan tanpa NVM, desain ini juga dapat dipasang sebagai blok tambahan pada baseline chip penyelenggara~\cite{peruri}. Kompilasi awal di Quartus Prime sudah berhasil hingga tahap Assembler dengan Fmax 86,85~MHz (\emph{constraint} clock belum final).
+\textbf{Target prototipe FPGA.} Desain ditujukan untuk bagian FPGA Cyclone~V pada DE10-Nano. Prosesor ARM (HPS) pada board yang sama berperan sebagai BMS, stasiun, dan basis data identitas yang diemulasikan dengan Python. Karena antarmukanya sederhana dan tanpa NVM, desain ini juga dapat dipasang sebagai blok tambahan pada baseline chip penyelenggara~\cite{peruri}. Kompilasi awal di Quartus Prime sudah berhasil hingga tahap Assembler dengan Fmax 86,85~MHz (\emph{constraint} clock belum final).
 
 \begin{table}[!b]
 \centering
@@ -402,9 +415,8 @@ DSP & 0 & 0 & 112 \\ \hline
 \subsection{Strategi Verifikasi}
 
 \begin{itemize}
-  \item \textbf{Simulasi cocotb} --- SHA-256 dan HMAC dibandingkan dengan model referensi Python yang sudah lolos vektor uji FIPS 180-4 dan RFC 4231. FSM, \emph{nonce} berulang, \emph{lock}, dan derau bit pada \emph{fuzzy extractor} juga diuji.
-  \item \textbf{Prototipe awal} --- RTL diuji di Artix-7 dan Spartan-7 milik tim melalui UART, termasuk keunikan PUF antar-board.
-  \item \textbf{Pengujian di DE10-Nano} --- \emph{timing closure}, karakterisasi PUF (R1), uji \emph{replay} (R2), skenario basis data (R3), serta \emph{glitch} clock dan pin \emph{tamper} (R4).
+  \item \textbf{Verifikasi RTL yang telah dijalankan} --- Testbench C++ dengan Verilator membandingkan SHA-256 terhadap vektor pesan kosong, \texttt{abc}, dan \texttt{hello}; HMAC RTL terhadap RFC 4231 kasus 1 dan referensi Python; serta menguji PUF perilaku dan FSM. Uji integrasi top-level melalui AXI telah memverifikasi autentikasi dengan tag cocok, penolakan tag tidak cocok, dan \emph{zeroize}.
+  \item \textbf{Verifikasi lanjutan} --- Pengujian DE10-Nano, karakterisasi PUF fisik (R1), uji \emph{replay} (R2), skenario basis data (R3), serta pengujian \emph{glitch}/\emph{tamper} (R4) akan dilakukan setelah integrasi board. Statistik, latensi, dan sumber daya akan dilaporkan dari pengukuran aktual; belum ada hasil PUF fisik yang diklaim.
 \end{itemize}
 
 % =====================================================================
@@ -473,8 +485,8 @@ Penyerang fisik & Mengubah \emph{helper data} & Kunci menjadi salah sehingga res
 \begin{itemize}
   \item Repositori proyek (RTL, testbench, model Python, dokumentasi): \url{https://github.com/Grsliy/Heketon-bang}.
   \item Hasil awal model referensi Python (perangkat lunak, kunci tetap): lolos 2 vektor uji SHA-256 FIPS 180-4, 6 vektor uji HMAC-SHA-256 RFC 4231, dan 7 skenario protokol (baterai asli diterima, kloning, \emph{replay}, \emph{helper data} palsu, \emph{tamper}, dan kapasitas tidak wajar ditolak).
-  \item Perangkat lunak: Intel Quartus Prime Lite (sintesis, timing, LogicLock, SignalTap), Platform Designer, Verilator, cocotb, Icarus Verilog, Yosys, dan Python, serta OpenROAD dengan SkyWater SKY130 PDK sebagai opsi.
-  \item Register map dan spesifikasi perintah \texttt{auth\_ctrl} akan dilengkapi pada laporan teknis.
+  \item Perangkat lunak: Intel Quartus Prime Standard (sintesis, timing, LogicLock, SignalTap), Platform Designer, Verilator, dan Python. Yosys/OpenROAD dengan SkyWater SKY130 PDK merupakan opsi untuk pengembangan ASIC.
+  \item Register map, termasuk register tag autentikasi pada alamat 0x80--0x9C dan status \emph{zeroize}, akan dilengkapi pada laporan teknis.
 \end{itemize}
 
 \section*{Tim \& Pembagian Peran}
@@ -486,14 +498,14 @@ Penyerang fisik & Mengubah \emph{helper data} & Kunci menjadi salah sehingga res
 \hdr{Nama} & \hdr{Peran} & \hdr{Tanggung jawab} \\ \hline
 Guntur Sulistyo\newline{\footnotesize\color{subtle}Ketua} & Keamanan dan koordinasi & Model ancaman, desain \texttt{tamper\_mon}, uji serangan (\emph{replay}, \emph{glitch} clock, pembukaan casing), karakterisasi PUF, dan koordinasi tim. \\ \hline
 Muhammad Muqtada Alhaddad & Perancang RTL & Seluruh modul RTL (\texttt{bus\_if}, \texttt{auth\_ctrl}, \texttt{ro\_puf}, \texttt{fuzzy\_ext}, \texttt{key\_vault}, \texttt{hmac\_sha256}), sintesis, \emph{timing closure}, dan porting ke DE10-Nano. \\ \hline
-Dimas Eryan Ahnaf Fahrezi & Sistem dan verifikasi & Model referensi Python, \emph{testbench} cocotb, emulasi stasiun dan basis data identitas, protokol enrolment, serta dokumentasi dan presentasi. \\ \hline
+Dimas Eryan Ahnaf Fahrezi & Sistem dan verifikasi & Model referensi Python, \emph{testbench} C++/Verilator, emulasi stasiun dan basis data identitas, protokol enrolment, serta dokumentasi dan presentasi. \\ \hline
 Ir. Agus Bejo, S.T., M.Eng., D.Eng., IPM & Dosen pembimbing & Arahan teknis dan tinjauan desain. \\ \hline
 \end{tabularx}
 \end{center}
 
 \section*{Luaran \& Demo}
 
-Luaran berikut direncanakan untuk tahap bootcamp dan final. Hingga proposal ini dikirim, desain masih berada pada tahap perancangan.
+Luaran berikut direncanakan untuk tahap bootcamp dan final. Verifikasi RTL awal telah berjalan; demonstrasi dan karakterisasi pada DE10-Nano masih direncanakan.
 
 \field{Demo Live:}
 Demo direncanakan berjalan di DE10-Nano dengan dua ``baterai'' (dua lokasi PUF berbeda), dua stasiun emulasi, dan satu basis data identitas. Empat skenario akan ditunjukkan.
@@ -508,7 +520,7 @@ Demo direncanakan berjalan di DE10-Nano dengan dua ``baterai'' (dua lokasi PUF b
 Video 3--5 menit akan berisi masalah baterai palsu, cara kerja chip bersama stasiun dan basis data, serta keempat skenario demo. Video ini juga disiapkan sebagai cadangan bila board bermasalah saat demo langsung.
 
 \field{Repository Source Code:}
-Repositori akan memuat RTL Verilog, \emph{testbench} cocotb, model referensi Python, emulasi stasiun dan basis data, proyek Quartus, skrip karakterisasi PUF, dan \emph{bitstream}.
+Repositori akan memuat RTL SystemVerilog, \emph{testbench} C++/Verilator, model referensi Python, emulasi stasiun dan basis data, proyek Quartus, skrip karakterisasi PUF, dan \emph{bitstream}.
 
 \field{Laporan Teknis Singkat:}
 Laporan akan memuat hasil pengukuran terhadap target R1--R5, yaitu statistik PUF (keunikan dan reliabilitas), latensi autentikasi, hasil sintesis (sumber daya, \emph{timing}, dan daya), serta hasil uji serangan. Laporan juga dilengkapi spesifikasi arsitektur dan \emph{register map}.
