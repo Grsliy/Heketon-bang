@@ -51,7 +51,7 @@ Jangan menunggu pengumuman Top 5. Semua pekerjaan memakai board milik tim (Artix
 | Tugas | PIC | Selesai |
 |---|---|---|
 | Model Python: HMAC(K, nonce ‖ ID), basis data identitas, dan stasiun | VER | [ ] |
-| SHA-256 dari baseline TT07 lolos cocotb dengan vektor uji FIPS 180-4 | RTL, VER | [ ] |
+| SHA-256 lolos simulasi dengan vektor uji FIPS 180-4 | RTL, VER | [ ] |
 | Wrapper HMAC lolos vektor uji RFC 4231 | RTL, VER | [ ] |
 | `bus_if` (UART untuk prototipe) dan `auth_ctrl` (`GET_ID`, `AUTH`, `STATUS`, pembatas laju) | RTL | [ ] |
 | Demo jalur kritis di Artix-7: kunci tetap, PC mengirim *nonce*, respons dicek model Python | RTL, VER | [ ] |

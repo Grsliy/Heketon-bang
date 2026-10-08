@@ -32,7 +32,7 @@ Pembagian perannya tegas. Chip membuktikan identitas, stasiun mengukur kondisi s
 | ro_puf | Membaca sidik jari silikon dari 1.024 ring oscillator |
 | fuzzy_ext | Membuat bit PUF stabil sebelum dijadikan kunci |
 | key_vault | Menyimpan kunci hanya selama respons dihitung |
-| hmac_sha256 | Menghitung respons, berbasis inti SHA-256 dari Tiny Tapeout 07 |
+| hmac_sha256 | Menghitung respons dengan inti SHA-256 iteratif dan wrapper HMAC |
 | tamper_mon | Memantau clock dan sakelar casing, lalu memicu penghapusan kunci |
 
 Prototipe dijalankan di FPGA DE10-Nano (Cyclone V SoC). Prosesor ARM pada board yang sama mengemulasikan BMS, stasiun, dan basis data identitas. Target ASIC adalah SkyWater SKY130. Rincian desain dan analisis keamanan ada di [proposal](proposal/main.pdf).
