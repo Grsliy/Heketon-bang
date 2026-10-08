@@ -476,6 +476,32 @@ Penyerang fisik & Mengubah \emph{helper data} & Kunci menjadi salah sehingga res
   \item Register map, termasuk register tag autentikasi pada alamat 0x80--0x9C dan status \emph{zeroize}, akan dilengkapi pada laporan teknis.
 \end{itemize}
 
+Cuplikan berikut berasal dari proyek Quartus Prime Standard untuk Cyclone~V (5CSEBA6U23I7). Kompilasi yang ditampilkan berhasil hingga tahap \emph{Assembler}; laporan mencatat penggunaan sumber daya dan Fmax 86,85~MHz pada clock \texttt{h2f\_user0\_clk}. Constraint timing belum final, sehingga angka ini merupakan hasil awal prototipe dan bukan hasil sign-off. Tampilan Platform Designer memperlihatkan integrasi HPS dan HEKETON melalui lightweight AXI.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.27\textheight,keepaspectratio]{projectnav.png}
+  \caption{Hierarki hasil fitter Quartus dengan estimasi penggunaan ALM per blok RTL.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.27\textheight,keepaspectratio]{fitter_summary.png}
+  \caption{Fitter Summary: status kompilasi berhasil dan ringkasan penggunaan sumber daya pada Cyclone~V.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.27\textheight,keepaspectratio]{ffmax.png}
+  \caption{Fmax Summary; clock \texttt{h2f\_user0\_clk} tercatat sebesar 86,85~MHz pada kompilasi ini.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth,height=0.27\textheight,keepaspectratio]{platformdesign.png}
+  \caption{Platform Designer: HPS, lightweight AXI, dan HEKETON dalam sistem Qsys.}
+\end{figure}
+
 \section*{Tim \& Pembagian Peran}
 
 \begin{center}
