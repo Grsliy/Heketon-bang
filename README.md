@@ -73,6 +73,8 @@ Perintah pertama menjalankan seluruh uji. Perintah kedua membuat ulang vektor uj
 
 ## Tim
 
+Tim NaS, Universitas Gadjah Mada.
+
 | Nama | Peran |
 |---|---|
 | Guntur Sulistyo (ketua) | Keamanan dan koordinasi |
