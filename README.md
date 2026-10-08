@@ -1,4 +1,4 @@
-# Sebat: Secure Battery Identity Chip
+# SeBatt: Secure Battery Identity Chip
 
 Chip keamanan kecil di dalam setiap baterai motor listrik untuk membuktikan bahwa baterai tersebut asli, setiap kali ditukar di stasiun penukaran baterai (SPBKLU).
 
