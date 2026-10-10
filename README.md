@@ -25,15 +25,17 @@ Pembagian perannya tegas. Chip membuktikan identitas, stasiun mengukur kondisi s
 
 ## Arsitektur Chip
 
-| Modul | Tugas |
-|---|---|
-| bus_if | Antarmuka ke host (AXI-Lite di FPGA, I²C di ASIC) |
-| auth_ctrl | Mengatur urutan perintah dan membatasi laju autentikasi |
-| ro_puf | Membaca sidik jari silikon dari 1.024 ring oscillator |
-| fuzzy_ext | Membuat bit PUF stabil sebelum dijadikan kunci |
-| key_vault | Menyimpan kunci hanya selama respons dihitung |
-| hmac_sha256 | Menghitung respons dengan inti SHA-256 iteratif dan wrapper HMAC |
-| tamper_mon | Memantau clock dan sakelar casing, lalu memicu penghapusan kunci |
+| Modul | Tugas | Prototipe RTL |
+|---|---|---|
+| bus_if | Antarmuka ke host (AXI-Lite di FPGA, I²C di ASIC) | Ada |
+| auth_ctrl | Mengatur urutan perintah dan membatasi laju autentikasi | Ada |
+| ro_puf | Membaca sidik jari silikon dari 1.024 ring oscillator | Model perilaku (LFSR) |
+| fuzzy_ext | Membuat bit PUF stabil sebelum dijadikan kunci | Direncanakan |
+| key_vault | Menyimpan kunci hanya selama respons dihitung | Sebagian |
+| hmac_sha256 | Menghitung respons dengan inti SHA-256 iteratif dan wrapper HMAC | Ada |
+| tamper_mon | Memantau clock dan sakelar casing, lalu memicu penghapusan kunci | Direncanakan |
+
+Nama file RTL yang mengimplementasikan setiap modul ada di [rtl/](rtl/). Nama heketon pada file RTL dan proyek Quartus adalah nama internal blok top-level SeBatt.
 
 Prototipe dijalankan di FPGA DE10-Nano (Cyclone V SoC). Prosesor ARM pada board yang sama mengemulasikan BMS, stasiun, dan basis data identitas. Target ASIC adalah SkyWater SKY130. Rincian desain dan analisis keamanan ada di [proposal](proposal/main.pdf).
 
