@@ -16,6 +16,7 @@ venv/
 # Simulasi (cocotb / Verilator / Icarus)
 sim_build/
 obj_dir/
+sim/obj_*/
 results.xml
 *.vcd
 *.fst
